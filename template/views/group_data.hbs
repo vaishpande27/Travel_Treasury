@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Data</title>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="assests/bootstrap-5.3.2-dist/css/group_data.css">
+
+</head>
+
+<body>
+
+
+
+    <body>
+
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
+    <div id="app">
+    <h1>Your Group Data</h1>
+    <table id="tableContainer">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each individualTotals}}
+            <tr>
+                <td><a href="" class="person-name" data-name="{{this.name}}">{{this.name}}</a></td>
+                <td>{{this.total}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <div id="person-history">
+        <h2 id="person-name"></h2>
+        <ul id="person-expenses"></ul>
+    </div>
+
+    <canvas id="myChart" width="700px" height="350px"></canvas>
+
+    <table id="tableContainer2">
+        <tr>
+            <th>Name</th>
+            <th>Total Spent</th>
+            <th>Equal Share</th>
+            <th>Difference</th>
+            <th>Amount to Transfer</th>
+        </tr>
+        {{#each individualTotals}}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.total}}</td>
+            <td>{{this.equalShare}}</td>
+            <td>{{this.difference2}}</td>
+            <td>{{this.amountToTransfer}}</td>
+        </tr>
+        {{/each}}
+    </table>
+
+    <table>
+        <tbody>
+            {{#each individualTotals}}
+            <tr>
+                <td colspan="4">
+                    <ul>
+                        {{#each this.transactions}}
+                        <li>{{this.to}} pays {{this.from}} {{this.amount}}</li>
+                        {{/each}}
+                    </ul>
+                </td>
+            </tr>
+            {{/each}}
+
+
+            
+        </tbody>
+    </table>
+
+</div>
+
+   
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const individualTotals = {{{ individualTotals2 }}};
+
+        const names = individualTotals.map(item => item.name);
+        const totals = individualTotals.map(item => item.total);
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: names,
+                datasets: [{
+                    label: 'Total',
+                    data: totals,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        document.querySelectorAll('.person-name').forEach(function (element) {
+            element.addEventListener('click', function (event) {
+                event.preventDefault();
+                const name = event.target.getAttribute('data-name');
+                const person = individualTotals.find(p => p.name === name);
+
+                document.getElementById('person-name').textContent = name;
+                const expensesList = document.getElementById('person-expenses');
+                expensesList.innerHTML = '';
+
+                person.transactions.forEach(function (transaction) {
+                    const li = document.createElement('li');
+                    li.textContent = `${transaction.from} pays ${transaction.to} ${transaction.actualValue}`;
+                    expensesList.appendChild(li);
+                });
+
+                document.getElementById('person-history').style.display = 'block';
+            });
+        });
+    });
+    </script>
+</body>
+
+</html>
