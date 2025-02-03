@@ -1,7 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
-require("./db/db.js")
+require("./db/db.js") ///connection to the database
 
 const bodyParser = require('body-parser');
 
@@ -17,7 +17,7 @@ const template_path = path.join(__dirname, "../template/views")
 
 app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
-app.use(express.static(path.join(__dirname, "../template/views")));//for css file
+app.use(express.static(path.join(__dirname, "../template/views")));//for rendering pages 
 
 app.use(express.urlencoded({ extended: false }))
 
